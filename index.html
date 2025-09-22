@@ -583,49 +583,39 @@
       </div>
     </details>
 
-  <h2>Chapter 9 Devi Onfire Na Add nhi Kya Book sya Yad Kro</h2>
-  
-                <script>
-        let lang = "en";
 
-        function toggleLang() {
-            lang = (lang === "en") ? "ur" : "en";
-            alert("Language switched to " + (lang === "en" ? "English" : "Urdu"));
-            loadChapters();
-        }
+<script>
+    let currentLang = "en"; // default English
 
-        function loadChapters() {
-            fetch("/chapters")
-            .then(r => r.json())
-            .then(data => {
-                let out = "";
-                for (let id in data) {
-                    out += `<div class='chapter'><h3>${id}. ${data[id].title}</h3>`;
-                    data[id].questions.forEach((qa, i) => {
-                        out += `<p><b>Q${i+1}:</b> ${qa.q}<br><b>Ans:</b> ${qa.a}</p>`;
-                    });
-                    out += "</div>";
-                }
-                document.getElementById("chapters").innerHTML = out;
-            });
-        }
+    function toggleLang() {
+      if (currentLang === "en") {
+        document.querySelectorAll(".en").forEach(el => el.style.display = "none");
+        document.querySelectorAll(".ur").forEach(el => el.style.display = "block");
+        currentLang = "ur";
+      } else {
+        document.querySelectorAll(".ur").forEach(el => el.style.display = "none");
+        document.querySelectorAll(".en").forEach(el => el.style.display = "block");
+        currentLang = "en";
+      }
+    }
 
-        function searchWiki() {
-            let q = document.getElementById("wikiInput").value;
-            fetch("/wiki?q=" + q)
-            .then(r => r.json())
-            .then(data => {
-                if (data.extract) {
-                    document.getElementById("wikiResult").innerHTML =
-                      `<h3>${data.title}</h3><p>${data.extract}</p>`;
-                } else {
-                    document.getElementById("wikiResult").innerHTML = "Not found.";
-                }
-            });
-        }
+    async function searchWiki() {
+      let query = document.getElementById("wikiInput").value;
+      if (!query) return;
 
-        window.onload = loadChapters;
-    </script>
+      // Wikipedia API full intro extract
+      let url = `https://en.wikipedia.org/w/api.php?action=query&prop=extracts&exintro&explaintext&titles=${encodeURIComponent(query)}&format=json&origin=*`;
+
+      let res = await fetch(url);
+      let data = await res.json();
+
+      let pages = data.query.pages;
+      let page = Object.values(pages)[0]; // first result
+
+      document.getElementById("wikiResult").innerHTML =
+        `<h3>${page.title}</h3><p>${page.extract || "❌ No result found."}</p>`;
+    }
+  </script>
+<B>Devi Onfire na Chaper No 9 add Nhi Kya Oki My Love</B>
 </body>
-
 </html>
